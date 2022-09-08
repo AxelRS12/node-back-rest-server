@@ -1,10 +1,9 @@
 const {response, request} = require('express');
 const bcryptjs = require('bcryptjs');
 
-const { mailExistente } = require('../helpers/db-validators');
 
 const Usuario = require('../models/usuario');
-const usuario = require('../models/usuario');
+
 this.res = response;
 
 const getUsuarios = async (req, res = response) => {
@@ -14,7 +13,7 @@ const getUsuarios = async (req, res = response) => {
 
     const [total, listaUsuarios] = await Promise.all([
         Usuario.countDocuments(estado),
-        usuario.find( estado ).limit(5)
+        Usuario.find( estado ).limit(5)
             .skip(Number(desde))
             .limit(Number(limite))
     ])
@@ -43,13 +42,8 @@ const putUsuarios = async (req, res = response) => {
 
 const postUsuarios = async (req = request, res = response) => {
 
-    
-
-
     const { nombre, correo, password, rol } = req.body;
     const usuario = new Usuario( { nombre, correo, password, rol } );
-
-//verificar correo existente
     
 
 //Encriptar password
@@ -69,9 +63,11 @@ const deleteUsuarios = async (req, res = response) => {
     
     
     await Usuario.findByIdAndUpdate(id, { estado : false })
+    const usuarioAutenticado = req.usuario;
 
     res.status(202).json({
-        msg: `El usuario con id ${id} fue eliminado`
+        msg: `El usuario con id ${id} fue eliminado`,
+        usuarioAutenticado
 
     });
 }
